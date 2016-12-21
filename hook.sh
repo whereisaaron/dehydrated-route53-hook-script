@@ -7,6 +7,7 @@ set -e
 # - Supports certificates with alternative names in different Route 53 zones
 #
 # Aaron Roydhouse <aaron@roydhouse.com>, 2016
+# https://github.com/whereisaaron/dehydrated-route53-hook-script
 # Based on dehydrated hook.sh template
 #
 # Requires dehydrated (https://github.com/lukas2511/dehydrated)
