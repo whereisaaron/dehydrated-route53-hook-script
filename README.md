@@ -1,14 +1,14 @@
 # Dehydrated Route 53 Hook Script
 Dehydrated hook script that employs cli53 to enable dns-01 challenges with AWS Route 53 DNS hosting
 
-The `hook.sh` can me used in conjuntion with [`dehydrated`](https://github.com/lukas2511/dehydrated) and Let's Encrypt's service (letsencrypt.org) to issue SSL certificates for domain names hosted in [AWS Route 53](https://aws.amazon.com/route53/). The script is based on dehydrated `hook.sh` template, and heavily leverages the excellent [`cli53` Route 53 client](https://github.com/barnybug/cli53). It is designed to be called by the `dehydrated` script to create and delete dns-01 challenge records.
+The `hook.sh` can me used in conjunction with [`dehydrated`](https://github.com/lukas2511/dehydrated) and Let's Encrypt's service (letsencrypt.org) to issue SSL certificates for domain names hosted in [AWS Route 53](https://aws.amazon.com/route53/). The script is based on dehydrated `hook.sh` template, and heavily leverages the excellent [`cli53` Route 53 client](https://github.com/barnybug/cli53). It is designed to be called by the `dehydrated` script to create and delete dns-01 challenge records.
 
 The script will automatically identify the correct Route 53 zone for each domain name. It also supports certificates with alternative domain names in different Route 53 zones
 
-The script requires:
+The script requires the following tools, all of which should be in your Linux distro, except probably `cli53` which is a single standalone binary with no dependencies.
 - [cli53](https://github.com/barnybug/cli53)
 - bash
-- jq
+- [jq](https://stedolan.github.io/jq/)
 - sed
 - xargs
 - mailx (just for emailing errors)
