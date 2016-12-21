@@ -2,9 +2,9 @@
 set -e
 
 #
-# Dehydrated hook script that employs cli53 to enable dns-01 challenges with Route 53
+# Dehydrated hook script that employs cli53 to enable dns-01 challenges with AWS Route 53
 # - Will automatically identify the correct Route 53 zone for each domain name
-# - Supports certificates with alt names in different Route 53 zones
+# - Supports certificates with alternative names in different Route 53 zones
 #
 # Aaron Roydhouse <aaron@roydhouse.com>, 2016
 # Based on dehydrated hook.sh template
@@ -18,7 +18,7 @@ set -e
 #
 # Set AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables, or
 # Create ~/.aws/credentials file with [default] credentials, or
-# Set AWS_PROFILE to name of credentials enrty in ~/.aws/credentials
+# Set AWS_PROFILE to name of credentials entry in ~/.aws/credentials
 #
 # Neither dehydrated nor this script needs to run as root, so don't do it!
 #
@@ -104,7 +104,7 @@ function invalid_challenge {
     mailx -s "Failed to issue SSL cert for ${DOMAIN} on ${HOSTNAME}" root <<-END
       Failed to issue SSL cert for ${DOMAIN} on ${HOSTNAME}
 
-      Error from varification server:
+      Error from verification server:
       ${RESPONSE}
 END
 }
