@@ -1,5 +1,5 @@
 # Dehydrated Route 53 Hook Script
-Dehydrated hook script that employs cli53 to enable dns-01 challenges with AWS Route 53 DNS hosting
+This is a Dehydrated hook script that employs cli53 to enable dns-01 challenges with AWS Route 53 DNS hosting. The advantage of the dns-01 challenge is that doesn't require a web server or even for the server to be Internet accessible. Only the DNS hosting needs to be Internet accessible and have an API. So you can even request a certificate from an internal server which you only use internally.
 
 ```
 Processing test.example.com
