@@ -57,7 +57,7 @@ clean_challenge() {
     local ZONE=$(find_zone "${DOMAIN}")
     
     if [[ -n "$ZONE" ]]; then
-        echo "Deleting challenge record for ${DOMAIN} in zone ${ZONE}"
+        echo "Deleting challenge record for ${DOMAIN} from zone ${ZONE}"
         cli53 rrdelete "${ZONE}" "_acme-challenge.${DOMAIN}." TXT
     else
         echo "Could not find zone for ${DOMAIN}"
