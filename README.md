@@ -27,6 +27,8 @@ The `hook.sh` script can me used in conjunction with [`dehydrated`](https://gith
 
 The script will automatically identify the correct Route 53 zone for each domain name. It also supports certificates with alternative domain names in different Route 53 zones
 
+## Dependencies
+
 The script requires the following tools, all of which should be in your Linux distro, except probably `cli53` which is a single standalone binary with no dependencies.
 - [cli53](https://github.com/barnybug/cli53)
 - bash
@@ -35,9 +37,6 @@ The script requires the following tools, all of which should be in your Linux di
 - xargs
 - mailx (just for emailing errors)
 
-For `cli53` to work, it requires AWS credentials with access to Route 53, with permissions
-to list zones, and to create and delete records in zones. Set `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables, or create `~/.aws/credentials` file with `[default]` credentials, or set `AWS_PROFILE` to name of a credentials entry in `~/.aws/credentials`.
-
 This script will only work if `dehydrated` if using the following `config` settings.
 ```
 CHALLENGETYPE="dns-01"
@@ -45,6 +44,60 @@ HOOK=hook.sh
 HOOK_CHAIN="no"
 ```
 
-Note that `dehydrated` does not tell the hook script the challenge type, so this hook script has to assume every domain name is using a dns-01 challenge.
+`cli53` requires an AWS user access key, more details below.
 
-*Neither dehydrated nor this script needs to run as root, so don't do it!*
+## AWS Route 53 IAM User and Policy
+
+For `cli53` to work, it requires an AWS user access key with access to Route 53, with permissions
+to list zones, and to create and delete records in zones. Set `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables, or create `~/.aws/credentials` file with `[default]` credentials, or set `AWS_PROFILE` to name of a credentials entry in `~/.aws/credentials`.
+
+```
+[default]
+aws_access_key_id = AKIAJU5JT3POUSSXDY4A
+aws_secret_access_key = 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
+```
+
+You can and should create an AWS IAM user, and attach just the minimum policy needed to support the dns-01 challenge process. You can either attached the standard 'AmazonRoute53FullAccess' policy, or you can create a more limited policy such as below and attach that.
+
+```
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "route53:ListHostedZones",
+                "route53:ListHostedZonesByName"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "route53:ListResourceRecordSets",
+                "route53:ChangeResourceRecordSets"
+            ],
+            "Resource": "arn:aws:route53:::hostedzone/*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "route53:GetChange"
+            ],
+            "Resource": "arn:aws:route53:::change/*"
+        }
+    ]
+}
+```
+
+You could restrict this even further by listing only specific Route 53 zone Id's in, e.g.
+
+```
+"Resource": [ 
+    "arn:aws:route53:::hostedzone/Z12345678901", 
+    "arn:aws:route53:::hostedzone/Z12345678901" ]
+```
+
+## Limitations
+
+`dehydrated` does not tell the hook script the challenge type, so this hook script has to assume every domain name is using a dns-01 challenge.
