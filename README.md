@@ -108,6 +108,30 @@ Let's Encrypt certificate expire after 90 days, so you should create a cron task
 @daily /etc/dehydrated/dehydrated --cron  >/dev/null  #Check and renew SSL certificates from Let's Encrypt
 ```
 
+## Restart Web Servers for Renewed Certificates 
+
+Most services won't load any renewed certificate files until they are restarted or signaled to reload, sometimes because they have dropped priviledges and can no longer read their configuration files. You can extend the `deploy_cert` function in the hook script restart services or copy/load certificates into the right places, whenever a new or renewed certificate is created. Below is a simple example to restart apache on CentOS/RHEL. Change the sudo commands to suit other distros. 
+
+```
+deploy_cert() {
+    local DOMAIN="${1}" KEYFILE="${2}" CERTFILE="${3}" FULLCHAINFILE="${4}" CHAINFILE="${5}" TIMESTAMP="${6}"
+
+    # Restart apache to read the new certificate files
+    # Requires that user running dehydrated has sudoer rights to execute the right commands, e.g
+    # dehydrated ALL = NOPASSWD: /sbin/service httpd configtest, /sbin/service httpd graceful
+
+    # Only restart apache if the configuration is valid
+    echo -n "Checking apache config: "
+    sudo service httpd configtest
+    if [[ $? -eq 0 ]]; then
+      echo "Restarting apache to read the new certificate files for ${DOMAIN}"
+      sudo service httpd graceful
+    else
+      (>&2 echo "Skipping restarting apache because apache config is invalid") 
+    fi
+}
+```
+
 ## Limitations
 
 `dehydrated` does not tell the hook script the challenge type, so this hook script has to assume every domain name is using a dns-01 challenge.
