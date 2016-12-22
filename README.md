@@ -44,7 +44,9 @@ HOOK=hook.sh
 HOOK_CHAIN="no"
 ```
 
-`cli53` requires an AWS user access key, more details below.
+`cli53` requires an AWS user access key (more details below).
+
+You need to create a scheduled task (e.g. cron) to ensure your certificates are renewed regularly (more details below).
 
 ## AWS Route 53 IAM User and Policy
 
@@ -96,6 +98,14 @@ You could restrict this even further by listing only specific Route 53 zone Id's
 "Resource": [ 
     "arn:aws:route53:::hostedzone/Z12345678901", 
     "arn:aws:route53:::hostedzone/Z12345678901" ]
+```
+
+## Scheduled Task for Renewals (cron)
+
+Let's Encrypt certificate expire after 90 days, so you should create a cron task to check and renew the certificates if they will expire soon.
+
+```
+@daily /etc/dehydrated/dehydrated --cron  >/dev/null  #Check and renew SSL certificates from Let's Encrypt
 ```
 
 ## Limitations
