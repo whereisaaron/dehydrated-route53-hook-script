@@ -110,7 +110,7 @@ Let's Encrypt certificate expire after 90 days, so you should create a cron task
 
 ## Restart Web Servers for Renewed Certificates 
 
-Most services won't load any renewed certificate files until they are restarted or signaled to reload, sometimes because they have dropped priviledges and can no longer read their configuration files. You can extend the `deploy_cert` function in the hook script restart services or copy/load certificates into the right places, whenever a new or renewed certificate is created. Below is a simple example to restart apache on CentOS/RHEL. Change the sudo commands to suit other distros. 
+Most services won't load any renewed certificate files until they are restarted or signaled to reload, sometimes because they have dropped priviledges and can no longer read their configuration files. You can extend the `deploy_cert` function in the hook script restart services or copy/load certificates into the right places, whenever a new or renewed certificate is created. Below is a simple example to restart apache on CentOS/RHEL 6. Change the sudo commands to suit other distros. 
 
 ```
 deploy_cert() {
