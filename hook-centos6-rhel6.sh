@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 #
 # Dehydrated hook script that employs cli53 to enable dns-01 challenges with AWS Route 53
@@ -39,7 +38,7 @@ deploy_challenge() {
     
     if [[ -n "$ZONE" ]]; then
         echo "Creating challenge record for ${DOMAIN} in zone ${ZONE}"
-        cli53 rrcreate --wait "${ZONE}" "_acme-challenge.${DOMAIN}. 60 TXT ${TOKEN_VALUE}"
+        cli53 rrcreate --replace --wait "${ZONE}" "_acme-challenge.${DOMAIN}. 60 TXT ${TOKEN_VALUE}"
     else
         echo "Could not find zone for ${DOMAIN}"
         exit 1
@@ -86,11 +85,16 @@ deploy_cert() {
     # Requires that user running dehydrated has sudoer rights to execute the commands, e.g
     # dehydrated ALL = NOPASSWD: /sbin/service webmin restart
     #
+ 
+    # Only consider restarting if webmin if it is installed and running
+    if [[ "$(sudo service webmin status)" =~ "running" ]]; then
 
-    # Restart webmin if the domain name somewhat matches the hostname
-    if [[ "${DOMAIN}" =~ ^"$(hostname --short)"\. ]]; then
-      echo "Restarting webmin to read the new certificate files for ${DOMAIN}"
-      echo sudo service webmin restart
+      # Restart webmin if the domain name somewhat matches the hostname
+      if [[ "${DOMAIN}" =~ ^"$(hostname --short)"\. ]]; then
+        echo "Restarting webmin to read the new certificate files for ${DOMAIN}"
+        sudo service webmin restart
+      fi
+
     fi
 
     #
@@ -99,14 +103,19 @@ deploy_cert() {
     # dehydrated ALL = NOPASSWD: /sbin/service httpd configtest, /sbin/service httpd graceful
     #
 
-    # Restart apache if the configuration is valid
-    echo -n "Checking apache config: "
-    sudo service httpd configtest
-    if [[ $? -eq 0 ]]; then
-      echo "Restarting apache to read the new certificate files for ${DOMAIN}"
-      echo sudo service httpd graceful
-    else
-      (>&2 echo "Skipping restarting apache because apache config is invalid") 
+    # Only consider restarting if apache if it is installed and running
+    if [[ "$(sudo service httpd status)" =~ "running" ]]; then
+
+      # Restart apache if the configuration is valid
+      echo -n "Checking apache config: "
+      sudo service httpd configtest
+      if [[ $? -eq 0 ]]; then
+        echo "Restarting apache to read the new certificate files for ${DOMAIN}"
+        sudo service httpd graceful
+      else
+        (>&2 echo "Skipping restarting apache because apache config is invalid") 
+      fi
+
     fi
 }
 
