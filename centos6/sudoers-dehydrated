@@ -1,0 +1,2 @@
+dehydrated ALL = NOPASSWD: /sbin/service httpd status, /sbin/service httpd configtest, /sbin/service httpd graceful
+dehydrated ALL = NOPASSWD: /sbin/service webmin status, /sbin/service webmin restart
