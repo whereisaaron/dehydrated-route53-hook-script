@@ -5,7 +5,8 @@
 # - Will automatically identify the correct Route 53 zone for each domain name
 # - Supports certificates with alternative names in different Route 53 zones
 #
-# This version includes a deploy_cert function for CentOS 6 / RHEL 6 for webmin and apache
+# This version includes a deploy_cert function for CentOS 6 / RHEL 6 / Amazon Linux
+# for webmin, apache, and slapd (Sys V init 'service' command)
 #
 # Aaron Roydhouse <aaron@roydhouse.com>, 2016
 # https://github.com/whereisaaron/dehydrated-route53-hook-script
@@ -100,10 +101,10 @@ deploy_cert() {
     #
     # Restart apache to read the new certificate files
     # Requires that user running dehydrated has sudoer rights to execute the commands, e.g
-    # dehydrated ALL = NOPASSWD: /sbin/service httpd configtest, /sbin/service httpd graceful
+    # dehydrated ALL = NOPASSWD: /sbin/service httpd status, /sbin/service httpd configtest, /sbin/service httpd graceful
     #
 
-    # Only consider restarting if apache if it is installed and running
+    # Only consider restarting apache if it is installed and running
     if [[ "$(sudo service httpd status)" =~ "running" ]]; then
 
       # Restart apache if the configuration is valid
@@ -116,6 +117,41 @@ deploy_cert() {
         (>&2 echo "Skipping restarting apache because apache config is invalid") 
       fi
 
+    fi
+
+    #
+    # Restart slapd (openldap) to read the new certificate files bash on heuristic that domain starts with 'ldap'
+    # Requires that user running dehydrated has sudoer rights to execute the commands, e.g
+    # dehydrated ALL = NOPASSWD: /sbin/service slapd status, /sbin/service slapd configtest, /sbin/service slapd restart
+    #
+
+    # Only consider restarting slapd if cert starts with ldap
+    if [[ "${DOMAIN}" =~ ^ldap ]]; then
+
+      # Copy the cert if the target folder exists and it writable
+      # Target folder should be set-gid 'ldap' to ensure slapd can read the files
+      local LDAP_DEPLOY=/etc/openldap/dehydrated
+      if [[ -d "${LDAP_DEPLOY}" && -w "${LDAP_DEPLOY}" ]]; then
+        echo "Copying slapd cert/key/chain (${KEYFILE} ${CERTFILE} ${CHAINFILE}) to ${LDAP_DEPLOY}"
+        cp "${KEYFILE}" "${CERTFILE}" "${CHAINFILE}" "${LDAP_DEPLOY}"
+        chmod g+r "${KEYFILE}" "${CERTFILE}" "${CHAINFILE}"
+      fi
+
+      # Only consider restarting slapd if it is installed and running
+      if [[ "$(sudo service slapd status)" =~ "running" ]]; then
+
+        # Restart slapd if the configuration is valid
+        echo -n "Checking slapd config: "
+        sudo service slapd configtest
+        if [[ $? -eq 0 ]]; then
+          echo "Config OK"
+          echo "Restarting slapd to read the new certificate files for ${DOMAIN}"
+          sudo service slapd restart
+        else
+          echo "Config is invalid"
+          (>&2 echo "Skipping restarting slapd because slapd config is invalid") 
+        fi
+      fi
     fi
 }
 
