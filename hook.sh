@@ -154,4 +154,6 @@ function find_zone() {
 }
 
 HANDLER="$1"; shift
-"$HANDLER" "$@"
+if [[ "${HANDLER}" =~ ^(deploy_challenge|clean_challenge|deploy_cert|unchanged_cert|invalid_challenge|request_failure|exit_hook)$ ]]; then
+  "$HANDLER" "$@"
+fi
