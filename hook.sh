@@ -153,8 +153,12 @@ function find_zone() {
   return 1
 }
 
-function exit_hook() {
-  exit 0
+#
+# This hook is called at the end of a dehydrated command and can be used
+# to do some final (cleanup or other) tasks.
+#
+exit_hook() {
+  :
 }
 
 HANDLER="$1"; shift

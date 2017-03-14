@@ -229,5 +229,15 @@ function find_zone() {
   return 1
 }
 
+#
+# This hook is called at the end of a dehydrated command and can be used
+# to do some final (cleanup or other) tasks.
+#
+exit_hook() {
+  :
+}
+
 HANDLER="$1"; shift
-"$HANDLER" "$@"
+if [[ "${HANDLER}" =~ ^(deploy_challenge|clean_challenge|deploy_cert|unchanged_cert|invalid_challenge|request_failure|exit_hook)$ ]]; then
+  "$HANDLER" "$@"
+fi
