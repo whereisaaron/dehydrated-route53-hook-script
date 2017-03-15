@@ -55,8 +55,8 @@ to list zones, and to create and delete records in zones. Set `AWS_ACCESS_KEY_ID
 
 ```
 [default]
-aws_access_key_id = AKIAJU5JT3POUSSXDY4A
-aws_secret_access_key = Fay2FY4/jDoeaXicFTIKqcTosVXp2mMq+ja7kSrs
+aws_access_key_id = AKIA1234567890124567
+aws_secret_access_key = FakeFAKEfakeFAKEfakeFAKEfakeFAKEfakeFAKE
 ```
 
 You can and should create an AWS IAM user, and attach just the minimum policy needed to support the dns-01 challenge process. You can either attached the standard 'AmazonRoute53FullAccess' policy, or you can create a more limited policy such as below and attach that.
