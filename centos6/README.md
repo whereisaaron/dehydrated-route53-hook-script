@@ -1,7 +1,7 @@
 # Hook script for CentOS 6, RHEL 6, and Amazon Linux
 
 This `hook.sh` is includes the dns-01 challenge support along 
-with a `deploy_cert` function for restart apache or webmin 
+with a `deploy_cert` function for restart apache or webmin/usermin 
 (if they are installed and running). The restart function is
 suitable for CentOS 6, RHEL 6, and Amazon Linux.
 

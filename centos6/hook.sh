@@ -79,23 +79,31 @@ deploy_cert() {
     local DOMAIN="${1}" KEYFILE="${2}" CERTFILE="${3}" FULLCHAINFILE="${4}" CHAINFILE="${5}" TIMESTAMP="${6}"
 
     #
-    # Restart webmin based on domain name match heuristic:
+    # Restart webmin and usermin based on domain name match heuristic:
     # If the first segment of the primary certificate domain name 
     # matches the first segment of the hostname, then this certificate
-    # may be used for webmin, so restart webmin service to read it
+    # may be used for webmin/usermin, so restart webmin/usermin service to read it
     # Requires that user running dehydrated has sudoer rights to execute the commands, e.g
-    # dehydrated ALL = NOPASSWD: /sbin/service webmin restart
+    # dehydrated ALL = NOPASSWD: /sbin/service webmin status, /sbin/service webmin restart
+    # dehydrated ALL = NOPASSWD: /sbin/service usermin status, /sbin/service usermin restart
     #
  
     # Only consider restarting if webmin if it is installed and running
     if [[ "$(sudo service webmin status)" =~ "running" ]]; then
-
       # Restart webmin if the domain name somewhat matches the hostname
       if [[ "${DOMAIN}" =~ ^"$(hostname --short)"\. ]]; then
         echo "Restarting webmin to read the new certificate files for ${DOMAIN}"
         sudo service webmin restart
       fi
+    fi
 
+    # Only consider restarting if usermin if it is installed and running
+    if [[ "$(sudo service usermin status)" =~ "running" ]]; then
+      # Restart usermin if the domain name somewhat matches the hostname
+      if [[ "${DOMAIN}" =~ ^"$(hostname --short)"\. ]]; then
+        echo "Restarting usermin to read the new certificate files for ${DOMAIN}"
+        sudo service usermin restart
+      fi
     fi
 
     #
