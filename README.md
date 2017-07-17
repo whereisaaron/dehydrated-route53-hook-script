@@ -69,7 +69,8 @@ You can and should create an AWS IAM user, and attach just the minimum policy ne
             "Effect": "Allow",
             "Action": [
                 "route53:ListHostedZones",
-                "route53:ListHostedZonesByName"
+                "route53:ListHostedZonesByName",
+                "route53:ListResourceRecordSets"
             ],
             "Resource": "*"
         },
