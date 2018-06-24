@@ -37,7 +37,7 @@ deploy_challenge() {
     
     if [[ -n "$ZONE" ]]; then
         echo "Creating challenge record for ${DOMAIN} in zone ${ZONE}"
-        cli53 rrcreate --replace --wait "${ZONE}" "_acme-challenge.${DOMAIN}. 60 TXT ${TOKEN_VALUE}"
+        cli53 rrcreate --append --wait "${ZONE}" "_acme-challenge.${DOMAIN}. 60 TXT ${TOKEN_VALUE}"
     else
         echo "Could not find zone for ${DOMAIN}"
         exit 1
