@@ -23,7 +23,7 @@ Deleting challenge record for test.example.com from zone example.com
  + Done!
 ```
 
-The `hook.sh` script can me used in conjunction with [`dehydrated`](https://github.com/lukas2511/dehydrated) and Let's Encrypt's service (letsencrypt.org) to issue SSL certificates for domain names hosted in [AWS Route 53](https://aws.amazon.com/route53/). The script is based on the dehydrated `hook.sh` template, and heavily leverages the excellent [`cli53` Route 53 client](https://github.com/barnybug/cli53). It is designed to be called by the `dehydrated` script to create and delete dns-01 challenge records.
+The `hook.sh` script can be used in conjunction with [`dehydrated`](https://github.com/lukas2511/dehydrated) and Let's Encrypt's service (letsencrypt.org) to issue SSL certificates for domain names hosted in [AWS Route 53](https://aws.amazon.com/route53/). The script is based on the dehydrated `hook.sh` template, and heavily leverages the excellent [`cli53` Route 53 client](https://github.com/barnybug/cli53). It is designed to be called by the `dehydrated` script to create and delete dns-01 challenge records.
 
 The script will automatically identify the correct Route 53 zone for each domain name. It also supports certificates with alternative domain names in different Route 53 zones
 
