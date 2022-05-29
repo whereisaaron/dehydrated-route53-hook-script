@@ -164,4 +164,7 @@ exit_hook() {
 HANDLER="$1"; shift
 if [[ "${HANDLER}" =~ ^(deploy_challenge|clean_challenge|deploy_cert|unchanged_cert|invalid_challenge|request_failure|exit_hook)$ ]]; then
   "$HANDLER" "$@"
+else
+  # Dealing with this_hookscript_is_broken__dehydrated_is_working_fine__please_ignore_unknown_hooks_in_your_script
+  exit 0
 fi
