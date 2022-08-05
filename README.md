@@ -40,7 +40,7 @@ The script requires the following tools, all of which should be in your Linux di
 This script will only work if `dehydrated` if using the following `config` settings.
 ```
 CHALLENGETYPE="dns-01"
-HOOK=hook.sh
+HOOK="./hook.sh"
 HOOK_CHAIN="no"
 ```
 
